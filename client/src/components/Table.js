@@ -48,8 +48,8 @@ function Tabledemo() {
 
   const location = useLocation();
   const langcode = location.pathname.split('/')[3];
-  console.log("location", location.state.items.translations[langcode]);
-  const jsonlangfetched = location.state.items.translations[langcode];
+  // console.log("location", location.state.items.translations[langcode]);
+  // const jsonlangfetched = location.state.items.translations[langcode];
   const { from } = location.state
   // Creating style object
   const classes = useStyles();
@@ -70,14 +70,16 @@ function Tabledemo() {
   const [trigger, settrigger] = useState(-1);
   var thisjson = {};
   // const [fintrans,setfintrans]=React.useState({});
-  var fintrans = {};
+  // var fintrans = {};
   var outputtrans = {};
 
   useEffect(() => {
-
-    console.log("inside useffect", jsonlangfetched);
-
-    Object.entries(jsonlangfetched).map(([key, value]) => {
+    console.log(location.pathname.split('/')[2]);
+    Axios.post("/api/projects/findpid/",{
+      pid:location.pathname.split('/')[2]
+    }).then(res=>{
+      console.log("Fetched the project data successfully",res.data.data[0].translations[currlang]);
+        Object.entries(res.data.data[0].translations[currlang]).map(([key, value]) => {
       console.log(key);
       setRows([
         ...rows,
@@ -87,6 +89,23 @@ function Tabledemo() {
         },
       ]);
     })
+
+    }).catch(err=>{
+      console.log("there was an error fetching the data",err);
+    })
+
+  //   console.log("inside useffect", jsonlangfetched);
+
+  //   Object.entries(jsonlangfetched).map(([key, value]) => {
+  //     console.log(key);
+  //     setRows([
+  //       ...rows,
+  //       {
+  //         id: rows.length + 1, key: key,
+  //         value: value
+  //       },
+  //     ]);
+  //   })
   }, [])
 
   const handleClose = (event, reason) => {
@@ -115,7 +134,7 @@ function Tabledemo() {
 
   // Function to handle save
   const handleSave = () => {
-    console.log("prop", location.pathname.split('/')[3]);
+    // console.log("prop", location.pathname.split('/')[3]);
     setEdit(!isEdit);
     setRows(rows);
     console.log("saved : ", rows);
@@ -125,68 +144,72 @@ function Tabledemo() {
     }
 
 
-    fintrans[location.pathname.split('/')[3]] = JSON.stringify(thisjson);
+    // fintrans[location.pathname.split('/')[3]] = JSON.stringify(thisjson);
 
     setDisable(true);
     setOpen(true);
     let translateFrom = 'en'
-    var trns = {};
-    console.log(location.state.items.Languages)
 
+    console.log(location.state.items.Languages)
+    outputtrans['en']={};
 
     rows.map((row, i) => {
       // console.log("map try",row);
-      trns[row.key] = row.value;
+      outputtrans["en"][row.key] = row.value;
     })
 
-    outputtrans["en"] = trns;
+   
 
-    var bar = new Promise((resolve, reject) => {
-      location.state.items.Languages.map((lang, i) => {
+   
+    const fetchdata=async()=>{
+        await Promise.all(location.state.items.Languages.map(async(lang, i,{length}) => { //hi ar
 
-        console.log("inside lanf ap", lang);
-        let translateTo = lang.value;
-        trns = {};
+          console.log("inside lanf ap", lang);
+          let translateTo = lang.value;
+         
+          outputtrans[lang.value]={};
+  
+          await Promise.all(
+            rows.map(async(row, j) => { //'k1':'hello' 'k2':'this is fun'
+            // trns[row.key]="KOOOOr";
+            console.log("map ke andar", i,j,rows.length,length);
+            const k = row.key;
+            let apiurl = `https://api.mymemory.translated.net/get?q=${row.value}&langpair=${translateFrom}|${translateTo}`;
+              await Axios.get(apiurl).then(res => {
+              // trns[row.key] = res.data.responseData.translatedText;
+              outputtrans[translateTo][row.key]=res.data.responseData.translatedText;
 
+              console.log(res.data.responseData.translatedText);
+            }).catch(err => {
+              console.log("error occurred in translation mymory.translated api", err);
+            });
+          })).then(()=>{    
+              console.log("output trns",translateTo,outputtrans);
+          })        
+        })).then(()=>{
+          console.log("last me bro after lang af");
+          console.log("Axios call", outputtrans);
+          Axios.post('/api/projects/update/', {
+            _id: location.state.items._id,
+            PName: location.state.items.PName,
+            date: location.state.items.date,
+            Languages: location.state.items.Languages,
+            translations: outputtrans
 
-        rows.map((row, j) => {
-          // trns[row.key]="KOOOOr";
-          console.log("map ke andar", i);
-          const k = row.key;
-          let apiurl = `https://api.mymemory.translated.net/get?q=${row.value}&langpair=${translateFrom}|${translateTo}`;
-          Axios.get(apiurl).then(res => {
-            trns[row.key] = res.data.responseData.translatedText;
-            console.log(res.data.responseData.translatedText);
-            if(j==rows.length-1) resolve(1);
+          }).then(res => {
+            console.log("updated successfully");
           }).catch(err => {
-            console.log("error occurred in translation mymory.translated api", err);
-          });
-        })
-
-        outputtrans[translateTo] = trns;
-        
-      })
+            console.log("updation of project was unsuccessful", err);
+          })
+        })        
+      } 
       
-    })
-
-    bar.then(() => {
-      console.log("Axios call", outputtrans);
-
-      Axios.post('/api/projects/update/', {
-        _id: location.state.items._id,
-        PName: location.state.items.PName,
-        date: location.state.items.date,
-        Languages: location.state.items.Languages,
-        translations: outputtrans
-
-      }).then(res => {
-        console.log("updated successfully");
-      }).catch(err => {
-        console.log("updation of project was unsuccessful", err);
-      })
-    })
-
+      fetchdata();
+ 
   };
+
+  
+
 
 
   const handleInputChange = (e, index) => {
