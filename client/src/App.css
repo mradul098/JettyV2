@@ -416,6 +416,21 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 0 55px 55px 0;
 }
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  position: absolute;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1.1em;
+  width: 100%;
+}
+
 .proj-imgbx {
   position: relative;
   border-radius: 30px;
@@ -447,6 +462,9 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 .proj-imgbx:hover .proj-txtx {
   top: 50%;
   opacity: 1;
+}
+.proj-imgbx:hover .centered {
+  display: none;
 }
 .proj-txtx h4 {
   font-size: 30px;
@@ -499,6 +517,33 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   font-size: 18px;
   letter-spacing: 0.8px;
   transition: 0.3s ease-in-out;
+}
+.addtext {
+  width: 32%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  color: #fff;
+  margin: 0 0 8px 0;
+  padding: 18px 26px;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 0.8px;
+  justify-content:  center;
+  transition: 0.3s ease-in-out;
+  margin-bottom: 2%;
+}
+.reactselect {
+  width: 31%;
+  margin: 0 0 8px 0;
+  margin-left: 8px;
+  margin-bottom: 2%;
+}
+.addbutton {
+  /* width: 31%;
+  margin: 0 0 8px 0; */
+  margin-left: 14%;
+  margin-bottom: 2%;
 }
 .contact form input:focus, .contact form textarea:focus {
   background: rgba(255, 255, 255, 1);
@@ -628,4 +673,29 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 .navimg {
   max-width: 100%; 
  max-height: 20%; 
+}
+
+.tablebody{
+  background-color: #666;
+  border-radius: 10%;
+  box-shadow: #4A2FBD;
+  padding: 30px;
+  /* position: absolute; */
+  /* top: 50%; */
+  margin-top: 10%;
+  left: 14%;
+  /* transform: translate(-50%, -50%); */
+
+  position: absolute;
+  /* text-align: center; */
+  /* font-size: 30px; */
+  /* font-weight: 700; */
+  /* letter-spacing: 0.8px; */
+  /* line-height: 1.1em; */
+  /* width: 100%; */
+}
+.tcell{
+  
+  text-align: right;
+  margin-left: 40px;
 }

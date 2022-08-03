@@ -8,12 +8,14 @@ import Axios from "axios";
 
 import {incNumber} from "./actions";
 import {decNumber} from "./actions";
+import { setEmail } from './actions';
 
 import { useSelector, useDispatch } from "react-redux";
 
 function Home() {
   const [listofUsers,setlistofUsers]=useState([]);
-  const changeTheNumber = useSelector(state => state.changeTheNumber);
+  const changeTheNumber = useSelector(state => state.changeTheNumber.num);
+  const emailid=useSelector(state => state.changeTheNumber.email);
   
   const dispatch = useDispatch();
   useEffect(()=>{
@@ -22,10 +24,14 @@ function Home() {
         password: "12345678@aA"
     }).then(function(response) {
       console.log('Authenticated');
+      dispatch(setEmail("kira5@dn.com"));
+      window.localStorage.setItem("isLoggedIn",true);
+      window.localStorage.setItem("emailid","kira5@dn.com");
     }).catch(function(error) {
       console.log(error);
       console.log('Error on Authentication');
     });
+
   },[]);
 
   return (
@@ -34,6 +40,7 @@ function Home() {
       
       <Banner/>
       <div class="quantity">
+        {emailid}
         <a class="quantity__minus" title="Decrement" onClick={() => dispatch(decNumber())}><span>-</span></a>
         <input name="quantity" type="text" class="quantity__input" value={changeTheNumber} />
         <a class="quantity__plus" title="Increment" onClick={() => dispatch(incNumber())}><span>+</span></a>
