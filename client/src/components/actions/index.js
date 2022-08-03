@@ -10,6 +10,13 @@ export const checkLoggedin= () =>{
     }
 }
 
+export const setEmail= (email) =>{
+    return {
+        type:'EMAILSET',
+        payload:email
+    }
+}
+
 export const decNumber = () => {
     return {
         type: 'DECREMENT'
